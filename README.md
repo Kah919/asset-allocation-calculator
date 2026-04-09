@@ -1,4 +1,4 @@
-# CryptoSplit
+# Justworks FE
 
 A web app that calculates how much of each cryptocurrency to buy given a USD amount and a custom split ratio. Powered by live exchange rates from the Coinbase API.
 
