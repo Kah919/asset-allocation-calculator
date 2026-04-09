@@ -142,23 +142,13 @@ function calculate() {
     ],
   })
 }
-
-function reset() {
-  results.value = null
-  validationError.value = null
-  totalUsd.value = ''
-  percentA.value = '70'
-  percentB.value = '30'
-  selectedA.value = SUPPORTED_CRYPTOS[0]
-  selectedB.value = SUPPORTED_CRYPTOS[1]
-}
 </script>
 
 <template>
-  <div class="w-full max-w-2xl mx-auto px-4 py-8">
+  <div class="w-full max-w-2xl mx-auto px-4 py-8 space-y-6">
 
     <!-- Header -->
-    <div class="mb-8 text-center">
+    <div class="text-center">
       <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Crypto Split Calculator</h1>
       <p class="mt-2 text-slate-500 dark:text-slate-400">
         Enter your holdings and split ratio to see how much of each crypto to buy.
@@ -170,19 +160,16 @@ function reset() {
       v-if="error"
       :message="error"
       @retry="fetchRates"
-      class="mb-6"
     />
 
     <!-- Form -->
     <form
-      v-if="!results"
       @submit.prevent="calculate"
       novalidate
       aria-label="Crypto split calculator"
       class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm
              dark:border-slate-700 dark:bg-slate-800"
     >
-
       <!-- USD Amount -->
       <div>
         <label for="usd-amount" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -220,7 +207,7 @@ function reset() {
 
           <!-- Crypto A -->
           <div class="space-y-2">
-            <label :for="'crypto-a'" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <label for="crypto-a" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Crypto A
             </label>
             <select
@@ -232,18 +219,14 @@ function reset() {
                      focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
                      dark:text-white cursor-pointer"
             >
-              <option
-                v-for="crypto in SUPPORTED_CRYPTOS"
-                :key="crypto.symbol"
-                :value="crypto.symbol"
-              >
+              <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
                 {{ crypto.symbol }} — {{ crypto.name }}
               </option>
             </select>
 
             <div class="relative">
               <input
-                :id="'percent-a'"
+                id="percent-a"
                 v-model="percentA"
                 type="number"
                 min="0"
@@ -255,16 +238,13 @@ function reset() {
                        focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
                        dark:text-white"
               />
-              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center
-                           text-slate-400 dark:text-slate-500">
-                %
-              </span>
+              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400 dark:text-slate-500">%</span>
             </div>
           </div>
 
           <!-- Crypto B -->
           <div class="space-y-2">
-            <label :for="'crypto-b'" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <label for="crypto-b" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Crypto B
             </label>
             <select
@@ -276,18 +256,14 @@ function reset() {
                      focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
                      dark:text-white cursor-pointer"
             >
-              <option
-                v-for="crypto in SUPPORTED_CRYPTOS"
-                :key="crypto.symbol"
-                :value="crypto.symbol"
-              >
+              <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
                 {{ crypto.symbol }} — {{ crypto.name }}
               </option>
             </select>
 
             <div class="relative">
               <input
-                :id="'percent-b'"
+                id="percent-b"
                 v-model="percentB"
                 type="number"
                 min="0"
@@ -299,21 +275,14 @@ function reset() {
                        focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
                        dark:text-white"
               />
-              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center
-                           text-slate-400 dark:text-slate-500">
-                %
-              </span>
+              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400 dark:text-slate-500">%</span>
             </div>
           </div>
         </div>
       </fieldset>
 
       <!-- Validation error -->
-      <p
-        v-if="validationError"
-        role="alert"
-        class="text-sm text-red-600 dark:text-red-400"
-      >
+      <p v-if="validationError" role="alert" class="text-sm text-red-600 dark:text-red-400">
         {{ validationError }}
       </p>
 
@@ -325,22 +294,37 @@ function reset() {
           <template v-else>Rates not loaded</template>
         </p>
 
-        <button
-          type="submit"
-          :disabled="loading || !!error"
-          class="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white
-                 hover:bg-blue-700 focus-visible:outline focus-visible:outline-2
-                 focus-visible:outline-blue-500 disabled:cursor-not-allowed
-                 disabled:opacity-50 transition-colors cursor-pointer"
-        >
-          <span v-if="loading">Loading…</span>
-          <span v-else>Calculate</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            @click="fetchRates"
+            :disabled="loading"
+            :title="'Refresh exchange rates'"
+            class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium
+                   text-slate-600 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2
+                   focus-visible:outline-blue-500 disabled:opacity-50 transition-colors
+                   dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+          >
+            Refresh rates
+          </button>
+
+          <button
+            type="submit"
+            :disabled="loading || !!error"
+            class="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white
+                   hover:bg-blue-700 focus-visible:outline focus-visible:outline-2
+                   focus-visible:outline-blue-500 disabled:cursor-not-allowed
+                   disabled:opacity-50 transition-colors cursor-pointer"
+          >
+            <span v-if="loading">Loading…</span>
+            <span v-else>Calculate</span>
+          </button>
+        </div>
       </div>
     </form>
 
     <!-- Results -->
-    <div v-else>
+    <div v-if="results">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <ResultCard
           v-for="alloc in results"
@@ -349,36 +333,9 @@ function reset() {
         />
       </div>
 
-      <!-- Summary -->
-      <p class="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
+      <p class="mt-3 text-center text-xs text-slate-400 dark:text-slate-500">
         Based on rates from {{ lastUpdated?.toLocaleTimeString() }}
       </p>
-
-      <!-- Actions -->
-      <div class="mt-6 flex justify-center gap-3">
-        <button
-          type="button"
-          @click="fetchRates"
-          :disabled="loading"
-          class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium
-                 text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2
-                 focus-visible:outline-blue-500 disabled:opacity-50 transition-colors
-                 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300
-                 dark:hover:bg-slate-600 cursor-pointer"
-        >
-          Refresh rates &amp; recalculate
-        </button>
-
-        <button
-          type="button"
-          @click="reset"
-          class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white
-                 hover:bg-blue-700 focus-visible:outline focus-visible:outline-2
-                 focus-visible:outline-blue-500 transition-colors cursor-pointer"
-        >
-          Start over
-        </button>
-      </div>
     </div>
 
   </div>
