@@ -12,7 +12,7 @@ const { isDark, toggle } = useTheme()
     :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700
            dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500
+           focus-visible:outline-2 focus-visible:outline-blue-500
            transition-colors cursor-pointer"
   >
     <!-- Sun icon (shown in dark mode) -->
