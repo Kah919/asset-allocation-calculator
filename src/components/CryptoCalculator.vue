@@ -149,8 +149,7 @@ function calculate() {
 
     <!-- Header -->
     <div class="text-center">
-      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Crypto Split Calculator</h1>
-      <p class="mt-2 text-slate-500 dark:text-slate-400">
+      <p class="text-slate-500 dark:text-slate-400">
         Enter your holdings and split ratio to see how much of each crypto to buy.
       </p>
     </div>
@@ -173,7 +172,7 @@ function calculate() {
       <!-- USD Amount -->
       <div>
         <label for="usd-amount" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-          Total holdings (USD)
+          Investable Assets (USD)
         </label>
         <div class="relative">
           <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400 dark:text-slate-500">
@@ -200,7 +199,7 @@ function calculate() {
       <!-- Crypto selectors + split inputs -->
       <fieldset>
         <legend class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-          Allocation split
+          Allocation Split
         </legend>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -210,19 +209,24 @@ function calculate() {
             <label for="crypto-a" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Crypto A
             </label>
-            <select
-              id="crypto-a"
-              :value="selectedA.symbol"
-              @change="onSelectA"
-              class="w-full rounded-lg border border-slate-300 bg-white py-2.5 px-3
-                     text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
-                     focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
-                     dark:text-white cursor-pointer"
-            >
-              <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
-                {{ crypto.symbol }} — {{ crypto.name }}
-              </option>
-            </select>
+            <div class="relative">
+              <select
+                id="crypto-a"
+                :value="selectedA.symbol"
+                @change="onSelectA"
+                class="w-full appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-8
+                       text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
+                       focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
+                       dark:text-white cursor-pointer"
+              >
+                <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
+                  {{ crypto.symbol }} — {{ crypto.name }}
+                </option>
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
 
             <div class="relative">
               <input
@@ -247,19 +251,24 @@ function calculate() {
             <label for="crypto-b" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Crypto B
             </label>
-            <select
-              id="crypto-b"
-              :value="selectedB.symbol"
-              @change="onSelectB"
-              class="w-full rounded-lg border border-slate-300 bg-white py-2.5 px-3
-                     text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
-                     focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
-                     dark:text-white cursor-pointer"
-            >
-              <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
-                {{ crypto.symbol }} — {{ crypto.name }}
-              </option>
-            </select>
+            <div class="relative">
+              <select
+                id="crypto-b"
+                :value="selectedB.symbol"
+                @change="onSelectB"
+                class="w-full appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-8
+                       text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
+                       focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
+                       dark:text-white cursor-pointer"
+              >
+                <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
+                  {{ crypto.symbol }} — {{ crypto.name }}
+                </option>
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
 
             <div class="relative">
               <input
@@ -287,7 +296,7 @@ function calculate() {
       </p>
 
       <!-- Rates status + Calculate -->
-      <div class="flex items-center justify-between gap-4">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p class="text-xs text-slate-400 dark:text-slate-500">
           <template v-if="loading">Fetching rates…</template>
           <template v-else-if="lastUpdatedLabel">Rates updated {{ lastUpdatedLabel }}</template>
@@ -301,18 +310,18 @@ function calculate() {
             :disabled="loading"
             :title="'Refresh exchange rates'"
             class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium
-                   text-slate-600 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2
+                   text-slate-600 hover:bg-slate-50 focus-visible:outline-2
                    focus-visible:outline-blue-500 disabled:opacity-50 transition-colors
                    dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
           >
-            Refresh rates
+            Refresh Rates
           </button>
 
           <button
             type="submit"
             :disabled="loading || !!error"
             class="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white
-                   hover:bg-blue-700 focus-visible:outline focus-visible:outline-2
+                   hover:bg-blue-700 focus-visible:outline-2
                    focus-visible:outline-blue-500 disabled:cursor-not-allowed
                    disabled:opacity-50 transition-colors cursor-pointer"
           >

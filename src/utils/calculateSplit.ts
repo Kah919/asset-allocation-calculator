@@ -13,7 +13,6 @@ export interface SplitInput {
  * Calculates how much of each crypto to buy given a USD total,
  * percentage split, and exchange rates.
  *
- * Pure function — no side effects, fully unit-testable.
  */
 export function calculateSplit(input: SplitInput): SplitAllocation[] {
   const { totalUsd, allocations } = input
