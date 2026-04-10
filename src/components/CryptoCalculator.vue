@@ -42,8 +42,8 @@ const lastUpdatedLabel = computed(() => {
 const totalUsd = ref<string>('')
 const selectedA = ref<CryptoOption>(SUPPORTED_CRYPTOS[0])
 const selectedB = ref<CryptoOption>(SUPPORTED_CRYPTOS[1])
-const percentA = ref<string>('70')
-const percentB = ref<string>('30')
+const percentA = ref<string>('')
+const percentB = ref<string>('')
 
 // Sync percentB whenever percentA changes
 watch(percentA, (val) => {
@@ -184,7 +184,7 @@ function calculate() {
             type="number"
             min="0"
             step="any"
-            placeholder="10000"
+            placeholder="0.00"
             autocomplete="off"
             :aria-invalid="!!validationError"
             class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-8 pr-4
@@ -236,6 +236,7 @@ function calculate() {
                 min="0"
                 max="100"
                 step="any"
+                placeholder="0"
                 :aria-label="`${selectedA.name} percentage`"
                 class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-4 pr-10
                        text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
@@ -278,6 +279,7 @@ function calculate() {
                 min="0"
                 max="100"
                 step="any"
+                placeholder="0"
                 :aria-label="`${selectedB.name} percentage`"
                 class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-4 pr-10
                        text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2

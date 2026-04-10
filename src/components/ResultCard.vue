@@ -6,7 +6,6 @@ defineProps<{
 }>()
 
 function formatCrypto(amount: number): string {
-  // Show enough decimal places to be meaningful for small crypto amounts
   if (amount === 0) return '0'
   if (amount >= 1) return amount.toLocaleString(undefined, { maximumFractionDigits: 6 })
   return amount.toLocaleString(undefined, { maximumFractionDigits: 8 })
@@ -52,7 +51,7 @@ function formatUsd(amount: number): string {
     </div>
 
     <div class="mt-4 border-t border-slate-100 dark:border-slate-700 pt-3 flex justify-between text-sm">
-      <span class="text-slate-500 dark:text-slate-400">USD value</span>
+      <span class="text-slate-500 dark:text-slate-400">USD Value</span>
       <span class="font-medium text-slate-700 dark:text-slate-300">
         {{ formatUsd(allocation.usdAmount) }}
       </span>
