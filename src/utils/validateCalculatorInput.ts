@@ -1,22 +1,18 @@
 export interface ValidatorInput {
-  totalUsd: string
-  percentA: string
-  percentB: string
+  totalUsd: number
+  percentA: number
+  percentB: number
   symbolA: string
   symbolB: string
 }
 
 export function validateCalculatorInput(input: ValidatorInput): string | null {
-  const usd = parseFloat(input.totalUsd)
-  const pA = parseFloat(input.percentA)
-  const pB = parseFloat(input.percentB)
+  if (isNaN(input.totalUsd)) return 'Please enter a valid USD amount.'
+  if (input.totalUsd <= 0) return 'USD amount must be greater than zero.'
+  if (isNaN(input.percentA) || isNaN(input.percentB)) return 'Both percentage fields must be filled in.'
+  if (input.percentA < 0 || input.percentB < 0) return 'Percentages cannot be negative.'
 
-  if (!input.totalUsd || isNaN(usd)) return 'Please enter a valid USD amount.'
-  if (usd <= 0) return 'USD amount must be greater than zero.'
-  if (isNaN(pA) || isNaN(pB)) return 'Both percentage fields must be filled in.'
-  if (pA < 0 || pB < 0) return 'Percentages cannot be negative.'
-
-  const sum = parseFloat((pA + pB).toFixed(2))
+  const sum = parseFloat((input.percentA + input.percentB).toFixed(2))
   if (sum !== 100) return `Percentages must sum to 100% (currently ${sum}%).`
 
   if (input.symbolA === input.symbolB) return 'Please select two different cryptocurrencies.'

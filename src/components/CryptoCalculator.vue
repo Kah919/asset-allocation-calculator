@@ -77,25 +77,23 @@ function onSelectCrypto(slot: 'A' | 'B', event: Event) {
   }
 }
 
-// ─── Validation ──────────────────────────────────────────────────────────────
+// ─── Validation + Results ─────────────────────────────────────────────────────
 const validationError = ref<string | null>(null)
-
-function validate(): boolean {
-  validationError.value = validateCalculatorInput({
-    totalUsd: totalUsd.value,
-    percentA: percentA.value,
-    percentB: percentB.value,
-    symbolA: selectedA.value.symbol,
-    symbolB: selectedB.value.symbol,
-  })
-  return validationError.value === null
-}
-
-// ─── Results ─────────────────────────────────────────────────────────────────
 const results = ref<SplitAllocation[] | null>(null)
 
 function calculate() {
-  if (!validate()) return
+  const usd = parseFloat(totalUsd.value)
+  const pA = parseFloat(percentA.value)
+  const pB = parseFloat(percentB.value)
+
+  validationError.value = validateCalculatorInput({
+    totalUsd: usd,
+    percentA: pA,
+    percentB: pB,
+    symbolA: selectedA.value.symbol,
+    symbolB: selectedB.value.symbol,
+  })
+  if (validationError.value) return
 
   const rateA = getRate(selectedA.value.symbol)
   const rateB = getRate(selectedB.value.symbol)
@@ -106,10 +104,10 @@ function calculate() {
   }
 
   results.value = calculateSplit({
-    totalUsd: parseFloat(totalUsd.value),
+    totalUsd: usd,
     allocations: [
-      { crypto: selectedA.value, percentage: parseFloat(percentA.value), ratePerDollar: rateA },
-      { crypto: selectedB.value, percentage: parseFloat(percentB.value), ratePerDollar: rateB },
+      { crypto: selectedA.value, percentage: pA, ratePerDollar: rateA },
+      { crypto: selectedB.value, percentage: pB, ratePerDollar: rateB },
     ],
   })
 }
