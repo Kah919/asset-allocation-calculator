@@ -1,22 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { useTheme } from '../composables/useTheme'
 
-const isDark = ref(false)
-
-onMounted(() => {
-  isDark.value = localStorage.getItem('theme') === 'dark'
-  applyTheme()
-})
-
-function applyTheme() {
-  document.documentElement.classList.toggle('dark', isDark.value)
-}
-
-function toggle() {
-  isDark.value = !isDark.value
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  applyTheme()
-}
+const { isDark, toggle } = useTheme()
 </script>
 
 <template>
