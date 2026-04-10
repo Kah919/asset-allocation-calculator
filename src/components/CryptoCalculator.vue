@@ -2,9 +2,11 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useExchangeRates } from '../composables/useExchangeRates'
 import { calculateSplit } from '../utils/calculateSplit'
+import { validateCalculatorInput } from '../utils/validateCalculatorInput'
 import type { CryptoOption, SplitAllocation } from '../types'
 import ResultCard from './ResultCard.vue'
 import ErrorBanner from './ErrorBanner.vue'
+import CryptoAllocationInput from './CryptoAllocationInput.vue'
 
 // ─── Supported cryptocurrencies ────────────────────────────────────────────
 // To add more in the future, just append to this array.
@@ -86,38 +88,14 @@ function onSelectB(event: Event) {
 const validationError = ref<string | null>(null)
 
 function validate(): boolean {
-  const usd = parseFloat(totalUsd.value)
-  const pA = parseFloat(percentA.value)
-  const pB = parseFloat(percentB.value)
-
-  if (!totalUsd.value || isNaN(usd)) {
-    validationError.value = 'Please enter a valid USD amount.'
-    return false
-  }
-  if (usd <= 0) {
-    validationError.value = 'USD amount must be greater than zero.'
-    return false
-  }
-  if (isNaN(pA) || isNaN(pB)) {
-    validationError.value = 'Both percentage fields must be filled in.'
-    return false
-  }
-  if (pA < 0 || pB < 0) {
-    validationError.value = 'Percentages cannot be negative.'
-    return false
-  }
-  const sum = parseFloat((pA + pB).toFixed(2))
-  if (sum !== 100) {
-    validationError.value = `Percentages must sum to 100% (currently ${sum}%).`
-    return false
-  }
-  if (selectedA.value.symbol === selectedB.value.symbol) {
-    validationError.value = 'Please select two different cryptocurrencies.'
-    return false
-  }
-
-  validationError.value = null
-  return true
+  validationError.value = validateCalculatorInput({
+    totalUsd: totalUsd.value,
+    percentA: percentA.value,
+    percentB: percentB.value,
+    symbolA: selectedA.value.symbol,
+    symbolB: selectedB.value.symbol,
+  })
+  return validationError.value === null
 }
 
 // ─── Results ─────────────────────────────────────────────────────────────────
@@ -203,92 +181,24 @@ function calculate() {
         </legend>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-          <!-- Crypto A -->
-          <div class="space-y-2">
-            <label for="crypto-a" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Crypto A
-            </label>
-            <div class="relative">
-              <select
-                id="crypto-a"
-                :value="selectedA.symbol"
-                @change="onSelectA"
-                class="w-full appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-8
-                       text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
-                       focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
-                       dark:text-white cursor-pointer"
-              >
-                <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
-                  {{ crypto.symbol }} — {{ crypto.name }}
-                </option>
-              </select>
-              <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </div>
-
-            <div class="relative">
-              <input
-                id="percent-a"
-                v-model="percentA"
-                type="number"
-                min="0"
-                max="100"
-                step="any"
-                placeholder="0"
-                :aria-label="`${selectedA.name} percentage`"
-                class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-4 pr-10
-                       text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
-                       focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
-                       dark:text-white"
-              />
-              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400 dark:text-slate-500">%</span>
-            </div>
-          </div>
-
-          <!-- Crypto B -->
-          <div class="space-y-2">
-            <label for="crypto-b" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Crypto B
-            </label>
-            <div class="relative">
-              <select
-                id="crypto-b"
-                :value="selectedB.symbol"
-                @change="onSelectB"
-                class="w-full appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-8
-                       text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
-                       focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
-                       dark:text-white cursor-pointer"
-              >
-                <option v-for="crypto in SUPPORTED_CRYPTOS" :key="crypto.symbol" :value="crypto.symbol">
-                  {{ crypto.symbol }} — {{ crypto.name }}
-                </option>
-              </select>
-              <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </div>
-
-            <div class="relative">
-              <input
-                id="percent-b"
-                v-model="percentB"
-                type="number"
-                min="0"
-                max="100"
-                step="any"
-                placeholder="0"
-                :aria-label="`${selectedB.name} percentage`"
-                class="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-4 pr-10
-                       text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2
-                       focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700
-                       dark:text-white"
-              />
-              <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400 dark:text-slate-500">%</span>
-            </div>
-          </div>
+          <CryptoAllocationInput
+            label="Crypto A"
+            select-id="crypto-a"
+            percent-id="percent-a"
+            :options="SUPPORTED_CRYPTOS"
+            :selected-symbol="selectedA.symbol"
+            v-model:percent="percentA"
+            @change-crypto="onSelectA"
+          />
+          <CryptoAllocationInput
+            label="Crypto B"
+            select-id="crypto-b"
+            percent-id="percent-b"
+            :options="SUPPORTED_CRYPTOS"
+            :selected-symbol="selectedB.symbol"
+            v-model:percent="percentB"
+            @change-crypto="onSelectB"
+          />
         </div>
       </fieldset>
 
@@ -305,7 +215,7 @@ function calculate() {
           <template v-else>Rates not loaded</template>
         </p>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 sm:ml-auto sm:shrink-0">
           <button
             type="button"
             @click="fetchRates"
@@ -313,8 +223,9 @@ function calculate() {
             :title="'Refresh exchange rates'"
             class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium
                    text-slate-600 hover:bg-slate-50 focus-visible:outline-2
-                   focus-visible:outline-blue-500 disabled:opacity-50 transition-colors
-                   dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                   focus-visible:outline-blue-500 disabled:opacity-50 disabled:cursor-not-allowed
+                   transition-colors dark:border-slate-600 dark:text-slate-300
+                   dark:hover:bg-slate-700 cursor-pointer"
           >
             Refresh Rates
           </button>
@@ -327,8 +238,7 @@ function calculate() {
                    focus-visible:outline-blue-500 disabled:cursor-not-allowed
                    disabled:opacity-50 transition-colors cursor-pointer"
           >
-            <span v-if="loading">Loading…</span>
-            <span v-else>Calculate</span>
+            Calculate
           </button>
         </div>
       </div>
