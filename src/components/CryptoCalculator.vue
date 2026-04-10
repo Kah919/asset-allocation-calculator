@@ -64,24 +64,17 @@ watch(percentB, (val) => {
 })
 
 // Prevent selecting the same crypto for both slots
-function onSelectA(event: Event) {
+function onSelectCrypto(slot: 'A' | 'B', event: Event) {
   const symbol = (event.target as HTMLSelectElement).value
   const found = SUPPORTED_CRYPTOS.find((c) => c.symbol === symbol)
   if (!found) return
-  if (found.symbol === selectedB.value.symbol) {
-    selectedB.value = selectedA.value
+  if (slot === 'A') {
+    if (found.symbol === selectedB.value.symbol) selectedB.value = selectedA.value
+    selectedA.value = found
+  } else {
+    if (found.symbol === selectedA.value.symbol) selectedA.value = selectedB.value
+    selectedB.value = found
   }
-  selectedA.value = found
-}
-
-function onSelectB(event: Event) {
-  const symbol = (event.target as HTMLSelectElement).value
-  const found = SUPPORTED_CRYPTOS.find((c) => c.symbol === symbol)
-  if (!found) return
-  if (found.symbol === selectedA.value.symbol) {
-    selectedA.value = selectedB.value
-  }
-  selectedB.value = found
 }
 
 // ─── Validation ──────────────────────────────────────────────────────────────
@@ -188,7 +181,7 @@ function calculate() {
             :options="SUPPORTED_CRYPTOS"
             :selected-symbol="selectedA.symbol"
             v-model:percent="percentA"
-            @change-crypto="onSelectA"
+            @change-crypto="onSelectCrypto('A', $event)"
           />
           <CryptoAllocationInput
             label="Crypto B"
@@ -197,7 +190,7 @@ function calculate() {
             :options="SUPPORTED_CRYPTOS"
             :selected-symbol="selectedB.symbol"
             v-model:percent="percentB"
-            @change-crypto="onSelectB"
+            @change-crypto="onSelectCrypto('B', $event)"
           />
         </div>
       </fieldset>
