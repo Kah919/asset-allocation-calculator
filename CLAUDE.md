@@ -28,6 +28,7 @@ src/
 
 | File | Purpose |
 |---|---|
+| `public/favicon.svg` | App icon — custom SVG
 | `src/types/index.ts` | All shared types: `CryptoOption`, `SplitAllocation`, `ExchangeRates` |
 | `src/utils/calculateSplit.ts` | Core calculation logic — pure function, no side effects |
 | `src/composables/useExchangeRates.ts` | Coinbase API fetch, retry logic, loading/error state |

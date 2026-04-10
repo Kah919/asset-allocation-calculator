@@ -53,6 +53,8 @@ npm run dev
 ## Project Structure
 
 ```
+public/
+└── favicon.svg                    # Custom SVG app icon
 src/
 ├── components/
 │   ├── CryptoCalculator.vue   # Main form and calculation UI
